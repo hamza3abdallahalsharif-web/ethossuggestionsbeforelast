@@ -64,12 +64,18 @@ body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:va
 .votebtn.agree.on{background:linear-gradient(135deg,var(--teal),var(--green));color:#fff;border-color:transparent}
 .votebtn.disagree.on{background:linear-gradient(135deg,#ff7b2f,#ff4f5a);color:#fff;border-color:transparent}
 .notewrap{margin-top:8px}
-.notewrap textarea,.ta{width:100%;font:inherit;font-size:.92rem;border:2px solid #e2dbf5;border-radius:12px;padding:8px 10px;resize:vertical;min-height:44px;background:var(--card-2);color:var(--ink)}
+.notewrap textarea,.ta{width:100%;font:inherit;font-size:.92rem;border:2px solid #e2dbf5;border-radius:14px;padding:10px 12px;resize:vertical;min-height:44px;background:var(--card-2);color:var(--ink);box-shadow:0 2px 0 rgba(0,0,0,.05);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
 .badge{display:inline-block;font-size:.72rem;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:6px}
 .badge.pending{background:#ffe9cf;color:#8a4700}
 .badge.approved{background:#d9fbe6;color:#0b6b32}
 .badge.rejected{background:#ffe0e0;color:#8a1f1f}
-input[type=text]{width:100%;font:inherit;font-size:1.05rem;border:2px solid #e2dbf5;border-radius:14px;padding:10px 12px;background:var(--card-2);color:var(--ink)}
+input[type=text],input[type=password]{width:100%;font:inherit;font-size:1.05rem;border:2px solid #e2dbf5;border-radius:16px;padding:12px 16px;background:var(--card-2);color:var(--ink);box-shadow:0 2px 0 rgba(0,0,0,.05);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .12s ease}
+input[type=text]::placeholder,input[type=password]::placeholder,.ta::placeholder,textarea::placeholder{color:var(--ink-soft);opacity:.75}
+input[type=text]:focus,input[type=password]:focus,.ta:focus,textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 4px rgba(131,56,236,.18),0 2px 0 rgba(0,0,0,.05);background:var(--card)}
+input[type=text]:focus{transform:translateY(-1px)}
+.topbar input[type=text]{background:rgba(255,255,255,.14);border:2px solid transparent;color:#fff;box-shadow:none;border-radius:14px;padding:10px 14px}
+.topbar input[type=text]::placeholder{color:rgba(255,255,255,.8)}
+.topbar input[type=text]:focus{background:rgba(255,255,255,.24);border-color:rgba(255,255,255,.7);box-shadow:0 0 0 4px rgba(255,255,255,.15);transform:none}
 .ov{position:fixed;inset:0;background:rgba(20,8,60,.6);backdrop-filter:blur(3px);z-index:150;display:grid;place-items:center;padding:16px}
 .pop-box{background:#fff;color:var(--ink);border-radius:24px;padding:22px;max-width:420px;width:100%;box-shadow:0 12px 0 rgba(0,0,0,.2),0 26px 50px rgba(0,0,0,.4);max-height:88vh;overflow:auto}
 .pop-box h3{margin:0 0 8px;font-size:1.25rem;text-align:center}
@@ -110,6 +116,7 @@ input[type=text]{width:100%;font:inherit;font-size:1.05rem;border:2px solid #e2d
 :root[data-theme="dark"] body{background:linear-gradient(135deg,var(--bg1),var(--bg2) 60%,#101226)}
 :root[data-theme="dark"] .pop-box{background:var(--card);color:var(--ink)}
 :root[data-theme="dark"] input[type=text],:root[data-theme="dark"] .ta,:root[data-theme="dark"] textarea,:root[data-theme="dark"] input[type=password]{background:#1b1430;color:var(--ink);border-color:#4a3d70}
+:root[data-theme="dark"] input[type=text]:focus,:root[data-theme="dark"] input[type=password]:focus,:root[data-theme="dark"] .ta:focus,:root[data-theme="dark"] textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,79,163,.22),0 2px 0 rgba(0,0,0,.1);background:#241a3d}
 :root[data-theme="dark"] .votebtn{background:#1b1430;border-color:#4a3d70;color:var(--ink)}
 :root[data-theme="dark"] .btn.ghost{background:#1b1430;border-color:#4a3d70;color:var(--ink)}
 :root[data-theme="dark"] .studchip{background:#1b1430;border-color:#4a3d70;color:var(--ink)}
@@ -272,24 +279,25 @@ function setLang(v){try{localStorage.setItem(K_LANG,v)}catch(e){}applyLang()}
 function applyLang(){const l=getLang();document.documentElement.setAttribute("lang",l);document.documentElement.setAttribute("dir",l==="ar"?"rtl":"ltr")}
 function getAvatar(id){try{return localStorage.getItem(K_AVATAR+id)||""}catch(e){return""}}
 function setAvatarLocal(id,dataUrl){try{localStorage.setItem(K_AVATAR+id,dataUrl)}catch(e){}}
-function getLocalPassword(id){try{return localStorage.getItem(K_PASS+id)||"Ethos@123"}catch(e){return "Ethos@123"}}
+function defaultPasswordFor(name){const first=(name||"").trim().split(/\s+/)[0]||"";return first+"@123"}
+function getLocalPassword(id,name){try{return localStorage.getItem(K_PASS+id)||defaultPasswordFor(name)}catch(e){return defaultPasswordFor(name)}}
 function setLocalPassword(id,pass){try{localStorage.setItem(K_PASS+id,pass)}catch(e){}}
 
 const I18N={
   en:{suggestions:"Suggestions",myResponses:"My Responses",mySuggestions:"My Suggestions",chats:"Chats",settings:"Settings",
     addSuggestion:"➕ Add a suggestion",headOfSchool:"🔐 Head of School",switchUser:"🔁 not you? switch",
-    groupChat:"Whole School Chat",searchClassmate:"🔎 Search a classmate to message…",noPrivate:"No private conversations yet — search a classmate above to start one.",
+    groupChat:"Whole School Chat",searchClassmate:"A classmate to message…",noPrivate:"No private conversations yet — search a classmate above to start one.",
     settingsTitle:"⚙️ Settings",profilePicture:"Profile picture",tapToChange:"Tap to change",theme:"Appearance",light:"☀️ Light",dark:"🌙 Dark",
     language:"Language",changePassword:"Change password",currentPassword:"Current password",newPassword:"New password",confirmPassword:"Confirm new password",
-    save:"💾 Save",back:"⬅ Back",enterPassword:"Enter your password",passwordSub:"Default password is Ethos@123 unless you've changed it.",
+    save:"💾 Save",back:"⬅ Back",enterPassword:"Enter your password",
     login:"Log in",wrongPassword:"Wrong password — try again.",passwordChanged:"✅ Password changed",passwordsNoMatch:"New passwords don't match",
     wrongOld:"Current password is wrong",pickWhoVoting:"Who's voting today? Pick your year group 🎒",pickClass:"Now pick your class",tapName:"Tap your name"},
   ar:{suggestions:"الاقتراحات",myResponses:"ردودي",mySuggestions:"اقتراحاتي",chats:"المحادثات",settings:"الإعدادات",
     addSuggestion:"➕ أضف اقتراحًا",headOfSchool:"🔐 مدير المدرسة",switchUser:"🔁 لست أنت؟ تبديل",
-    groupChat:"محادثة المدرسة",searchClassmate:"🔎 ابحث عن زميل للمراسلة…",noPrivate:"لا توجد محادثات خاصة بعد — ابحث عن زميل أعلاه لبدء محادثة.",
+    groupChat:"محادثة المدرسة",searchClassmate:"زميل للمراسلة…",noPrivate:"لا توجد محادثات خاصة بعد — ابحث عن زميل أعلاه لبدء محادثة.",
     settingsTitle:"⚙️ الإعدادات",profilePicture:"الصورة الشخصية",tapToChange:"اضغط للتغيير",theme:"المظهر",light:"☀️ فاتح",dark:"🌙 داكن",
     language:"اللغة",changePassword:"تغيير كلمة المرور",currentPassword:"كلمة المرور الحالية",newPassword:"كلمة المرور الجديدة",confirmPassword:"تأكيد كلمة المرور الجديدة",
-    save:"💾 حفظ",back:"⬅ رجوع",enterPassword:"أدخل كلمة المرور",passwordSub:"كلمة المرور الافتراضية هي Ethos@123 ما لم تقم بتغييرها.",
+    save:"💾 حفظ",back:"⬅ رجوع",enterPassword:"أدخل كلمة المرور",
     login:"دخول",wrongPassword:"كلمة مرور خاطئة — حاول مرة أخرى.",passwordChanged:"✅ تم تغيير كلمة المرور",passwordsNoMatch:"كلمتا المرور الجديدتان غير متطابقتين",
     wrongOld:"كلمة المرور الحالية غير صحيحة",pickWhoVoting:"من يصوت اليوم؟ اختر سنتك الدراسية 🎒",pickClass:"الآن اختر فصلك",tapName:"اضغط على اسمك"}
 };
@@ -299,16 +307,16 @@ function t(key){const l=getLang();return (I18N[l]&&I18N[l][key])||I18N.en[key]||
    PASSWORD — checked against the backend when it supports it, otherwise
    falls back to a per-device password so the app still works.
    ===================================================================== */
-async function verifyPassword(id,pass){
+async function verifyPassword(id,pass,name){
   try{
     const j=await api("student_verify_password",{studentKey:id,password:pass});
     if(j&&j.ok)return !!j.valid;
     if(!(j&&j.error==="unknown_action"))return false;
   }catch(e){}
-  return pass===getLocalPassword(id);
+  return pass===getLocalPassword(id,name);
 }
-async function changePassword(id,oldPass,newPass){
-  const ok=await verifyPassword(id,oldPass);
+async function changePassword(id,oldPass,newPass,name){
+  const ok=await verifyPassword(id,oldPass,name);
   if(!ok)return{ok:false,error:"wrong_old"};
   try{
     const j=await api("student_set_password",{studentKey:id,oldPassword:oldPass,newPassword:newPass});
@@ -457,7 +465,6 @@ function screenLoginPassword(p){
     <div class="avatar-big" style="cursor:default;margin-bottom:14px">${getAvatar(p.id)?`<img src="${getAvatar(p.id)}">`:avatarHTML(p.name,88)}</div>
     <input type="password" id="pwIn" placeholder="${t("enterPassword")}" style="text-align:center" autofocus>
     ${pendingLoginError?`<div class="note" style="background:#ffe0e0;color:#8a1f1f;margin-top:8px">${escapeHtml(pendingLoginError)}</div>`:""}
-    <div class="note">${t("passwordSub")}</div>
     <div class="row" style="margin-top:10px">
       <button class="btn ghost" id="back">${t("back")}</button>
       <button class="btn green" id="go">${t("login")}</button>
@@ -467,7 +474,7 @@ function screenLoginPassword(p){
   const submit=async()=>{
     const val=document.getElementById("pwIn").value;
     const btn=document.getElementById("go");btn.disabled=true;
-    const ok=await verifyPassword(p.id,val);
+    const ok=await verifyPassword(p.id,val,p.name);
     btn.disabled=false;
     if(ok){ME=p;setMe(p);go(screenHome)}
     else{pendingLoginError=t("wrongPassword");go(()=>screenLoginPassword(p))}
@@ -676,7 +683,7 @@ async function paintChatsOverview(pane){
   await loadRoster();
   pane.innerHTML=`<div class="card">
     ${outdatedBackendNote()}
-    <input type="text" id="dmSearch" placeholder="${t("searchClassmate")}">
+    <div class="topbar"><input type="text" id="dmSearch" placeholder="${t("searchClassmate")}" style="flex:1"></div>
     <div id="dmResults" style="margin-top:8px"></div>
     <div id="chatsList" style="margin-top:10px"><div class="spin">⏳ Loading…</div></div>
   </div>`;
@@ -863,7 +870,7 @@ function screenSettings(){
     const confPw=document.getElementById("confPw").value;
     if(!oldPw||!newPw){toast(getLang()==="ar"?"املأ كل الحقول":"Fill in all fields");return}
     if(newPw!==confPw){toast(t("passwordsNoMatch"));return}
-    const res=await changePassword(ME.id,oldPw,newPw);
+    const res=await changePassword(ME.id,oldPw,newPw,ME.name);
     if(res.ok)toast(t("passwordChanged"));
     else toast(t("wrongOld"));
   };
